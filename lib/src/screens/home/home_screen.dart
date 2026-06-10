@@ -57,7 +57,13 @@ class HomeScreen extends StatelessWidget {
           Spacer(),
           KIconButton(icon: AppIcons.download, iconSize: 20, onPressed: () {}),
           hSpace12,
-          KIconButton(icon: AppIcons.settings, iconSize: 20, onPressed: () {}),
+          KIconButton(
+            icon: AppIcons.settings,
+            iconSize: 20,
+            onPressed: () {
+              Navigator.pushNamed(context, AppRoutes.settings);
+            },
+          ),
           hSpace12,
           KIconButton(
             icon: AppIcons.userAdd,
