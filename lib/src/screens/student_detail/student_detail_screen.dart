@@ -17,7 +17,7 @@ class StudentDetailScreen extends StatelessWidget {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          buildAppbar(),
+          buildAppbar(context),
           Expanded(
             child: ListView(
               padding: EdgeInsets.fromLTRB(16, 16, 16, 16),
@@ -130,7 +130,7 @@ class StudentDetailScreen extends StatelessWidget {
     );
   }
 
-  Container buildAppbar() {
+  Container buildAppbar(BuildContext context) {
     return Container(
       padding: const EdgeInsets.fromLTRB(16, 4, 8, 12),
       decoration: BoxDecoration(
@@ -141,7 +141,11 @@ class StudentDetailScreen extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          KIconButton(iconSize: 20, icon: AppIcons.back, onPressed: () {}),
+          KIconButton(
+            iconSize: 20,
+            icon: AppIcons.back,
+            onPressed: () => Navigator.pop(context),
+          ),
           Text('Student Info'),
           KIconButton(
             iconSize: 24,

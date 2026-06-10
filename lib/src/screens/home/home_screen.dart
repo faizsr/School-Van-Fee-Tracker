@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:school_van_fee_tracker/src/core/constants/app_colors.dart';
 import 'package:school_van_fee_tracker/src/core/constants/app_constants.dart';
 import 'package:school_van_fee_tracker/src/core/constants/app_icons.dart';
+import 'package:school_van_fee_tracker/src/core/router/app_routes.dart';
 import 'package:school_van_fee_tracker/src/screens/home/widgets/k_search_field.dart';
 import 'package:school_van_fee_tracker/src/screens/home/widgets/student_card.dart';
 import 'package:school_van_fee_tracker/src/widgets/k_icon_button.dart';
@@ -63,7 +64,9 @@ class HomeScreen extends StatelessWidget {
             iconSize: 20,
             iconColor: AppColors.white,
             bgColor: AppColors.blue,
-            onPressed: () {},
+            onPressed: () {
+              Navigator.pushNamed(context, AppRoutes.addStudent);
+            },
           ),
         ],
       ),

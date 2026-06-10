@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:school_van_fee_tracker/src/screens/add_edit_student/add_edit_student_screen.dart';
 import '../../screens/home/home_screen.dart';
 import '../../screens/student_detail/student_detail_screen.dart';
 
@@ -33,9 +34,9 @@ class AppRouter {
       case AppRoutes.studentDetail:
         return _buildRoute(StudentDetailScreen());
 
-      // // ── Add Student ───────────────────────
-      // case AppRoutes.addStudent:
-      //   return _buildRoute(const AddEditStudentScreen());
+      // ── Add Student ───────────────────────
+      case AppRoutes.addStudent:
+        return _buildRoute(const AddEditStudentScreen());
 
       // // ── Edit Student ──────────────────────
       // case AppRoutes.editStudent:
