@@ -2,29 +2,30 @@ import 'dart:developer';
 
 import 'package:dio/dio.dart';
 import 'package:school_van_fee_tracker/src/models/school_model.dart';
+import 'package:school_van_fee_tracker/src/models/student_model.dart';
 import 'package:school_van_fee_tracker/src/services/api_service.dart';
 
-class SchoolService {
+class StudentService {
   final dio = Dio();
 
-  Future<SchoolModel?> addSchool(String name) async {
-    final url = '${ApiService.baseUrl}/schools';
-    final body = {'name': name};
+  Future<StudentModel?> addStudent(StudentModel student) async {
+    final url = '${ApiService.baseUrl}/students';
+    final body = student.toJson();
 
     try {
       final response = await dio.post(url, data: body);
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        log('New school added successfully: ${response.data}');
+        log('New student added successfully');
         final data = response.data['data'];
-        return SchoolModel.fromJson(data);
+        return StudentModel.fromJson(data);
       }
     } on DioException catch (e) {
       log(
-        'Dio exception in adding school: ${e.response?.statusCode} ${e.response?.data}',
+        'Dio exception in adding student: ${e.response?.statusCode} ${e.response?.data}',
       );
     } catch (e) {
-      log('Exception in adding school: $e');
+      log('Exception in adding student: $e');
     }
 
     return null;
@@ -71,24 +72,24 @@ class SchoolService {
     }
   }
 
-  Future<List<SchoolModel>> getSchools() async {
-    final url = '${ApiService.baseUrl}/schools';
+  Future<List<StudentModel>> getStudents() async {
+    final url = '${ApiService.baseUrl}/students';
 
     try {
       final response = await dio.get(url);
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        log('Schools fetched successfully: ${response.data}');
-        final data = response.data['data'] as List;
-        final schools = data.map((e) => SchoolModel.fromJson(e)).toList();
-        return schools;
+        log('Students fetched successfully');
+        final data = response.data['data']['students'] as List;
+        final students = data.map((e) => StudentModel.fromJson(e)).toList();
+        return students;
       }
     } on DioException catch (e) {
       log(
-        'Dio exception in fetching school: ${e.response?.statusCode} ${e.response?.data}',
+        'Dio exception in fetching students: ${e.response?.statusCode} ${e.response?.data}',
       );
     } catch (e) {
-      log('Exception in fetching schools: $e');
+      log('Exception in fetching students: $e');
     }
 
     return [];

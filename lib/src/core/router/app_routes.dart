@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:school_van_fee_tracker/src/models/student_model.dart';
 import 'package:school_van_fee_tracker/src/screens/add_edit_student/add_edit_student_screen.dart';
 import 'package:school_van_fee_tracker/src/screens/settings/settings_screen.dart';
 import '../../screens/home/home_screen.dart';
@@ -33,7 +34,8 @@ class AppRouter {
 
       // ── Student Detail ────────────────────
       case AppRoutes.studentDetail:
-        return _buildRoute(StudentDetailScreen());
+        final student = settings.arguments as StudentModel;
+        return _buildRoute(StudentDetailScreen(student: student));
 
       // ── Add Student ───────────────────────
       case AppRoutes.addStudent:

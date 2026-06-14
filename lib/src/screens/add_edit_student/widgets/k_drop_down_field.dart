@@ -12,7 +12,7 @@ class KDropDownField extends StatefulWidget {
     this.hintText,
     this.initialSelection,
     required this.list,
-    this.enableFilter = true,
+    this.enableSearch = false,
     this.controller,
     this.enableValidator = true,
     this.padding,
@@ -23,7 +23,7 @@ class KDropDownField extends StatefulWidget {
   final String? hintText;
   final String? initialSelection;
   final List<String> list;
-  final bool enableFilter;
+  final bool enableSearch;
   final TextEditingController? controller;
   final bool enableValidator;
   final double? padding;
@@ -55,11 +55,11 @@ class _KDropDownFieldState extends State<KDropDownField> {
             DropdownMenu(
               expandedInsets: EdgeInsets.zero,
               controller: widget.controller,
-              enableSearch: false,
+              enableSearch: widget.enableSearch,
+              enableFilter: true,
+              requestFocusOnTap: true,
               hintText: widget.hintText,
               initialSelection: widget.initialSelection,
-              requestFocusOnTap: false,
-              enableFilter: widget.enableFilter,
               textStyle: Theme.of(context).textTheme.labelLarge,
               onSelected: widget.onSelected,
               menuStyle: MenuStyle(
@@ -138,6 +138,19 @@ class _KDropDownFieldState extends State<KDropDownField> {
                   )
                   .toList(),
             ),
+
+            if (fieldState.hasError) ...[
+              vSpace4,
+              Padding(
+                padding: const EdgeInsets.only(left: 12),
+                child: Text(
+                  'Required field',
+                  style: Theme.of(
+                    context,
+                  ).textTheme.bodySmall?.copyWith(color: AppColors.red),
+                ),
+              ),
+            ],
           ],
         );
       },

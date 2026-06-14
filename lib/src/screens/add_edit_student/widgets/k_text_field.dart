@@ -37,7 +37,9 @@ class KTextField extends StatelessWidget {
             hintStyle: Theme.of(
               context,
             ).textTheme.bodyMedium?.copyWith(color: AppColors.gray),
-            errorStyle: Theme.of(context).textTheme.bodySmall,
+            errorStyle: Theme.of(
+              context,
+            ).textTheme.bodySmall?.copyWith(color: AppColors.red),
             contentPadding: const EdgeInsets.all(10),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(6),

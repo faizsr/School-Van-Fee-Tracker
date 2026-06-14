@@ -18,13 +18,11 @@ class SettingsScreen extends StatefulWidget {
 
 class _SettingsScreenState extends State<SettingsScreen> {
   late SchoolProvider schoolProvider;
-  String? revealedSchoolId;
 
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       schoolProvider = context.read<SchoolProvider>();
-      schoolProvider.getSchools();
     });
     super.initState();
   }
@@ -117,9 +115,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             style: TextStyle(color: AppColors.white),
           ),
         ),
-        onDismissed: (_) async {
-          schoolProvider.deleteSchool(school);
-        },
+        onDismissed: (_) => schoolProvider.deleteSchool(school),
         child: Row(
           children: [
             SizedBox(width: 40, child: Center(child: Text('${index + 1}.'))),

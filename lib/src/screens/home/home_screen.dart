@@ -1,14 +1,37 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:school_van_fee_tracker/src/core/constants/app_colors.dart';
 import 'package:school_van_fee_tracker/src/core/constants/app_constants.dart';
 import 'package:school_van_fee_tracker/src/core/constants/app_icons.dart';
 import 'package:school_van_fee_tracker/src/core/router/app_routes.dart';
+import 'package:school_van_fee_tracker/src/providers/school_provider.dart';
+import 'package:school_van_fee_tracker/src/providers/student_provider.dart';
 import 'package:school_van_fee_tracker/src/screens/home/widgets/k_search_field.dart';
 import 'package:school_van_fee_tracker/src/screens/home/widgets/student_card.dart';
 import 'package:school_van_fee_tracker/src/widgets/k_icon_button.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  late SchoolProvider schoolProvider;
+  late StudentProvider studentProvider;
+  String? revealedSchoolId;
+
+  @override
+  void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      schoolProvider = context.read<SchoolProvider>();
+      studentProvider = context.read<StudentProvider>();
+      schoolProvider.getSchools();
+      studentProvider.getStudents();
+    });
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -20,12 +43,39 @@ class HomeScreen extends StatelessWidget {
           buildHomeAppbar(context),
           separator,
           KSearchField(),
-          Expanded(
-            child: ListView.separated(
-              itemCount: 20,
-              itemBuilder: (context, index) => StudentCard(),
-              separatorBuilder: (context, index) => separator,
-            ),
+          Consumer<StudentProvider>(
+            builder: (context, value, child) {
+              if (value.isLoading) {
+                return Expanded(
+                  child: Center(
+                    child: CircularProgressIndicator(
+                      color: AppColors.gray,
+                      strokeWidth: 1.5,
+                    ),
+                  ),
+                );
+              }
+
+              if (value.students.isEmpty) {
+                return Expanded(
+                  child: Center(
+                    child: Text(
+                      'No students found',
+                      style: TextStyle(color: AppColors.gray),
+                    ),
+                  ),
+                );
+              }
+
+              return Expanded(
+                child: ListView.separated(
+                  itemCount: value.students.length,
+                  separatorBuilder: (context, index) => separator,
+                  itemBuilder: (context, index) =>
+                      StudentCard(student: value.students[index]),
+                ),
+              );
+            },
           ),
         ],
       ),

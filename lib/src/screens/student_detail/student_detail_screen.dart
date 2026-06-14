@@ -4,11 +4,13 @@ import 'package:iconify_flutter/icons/ci.dart';
 import 'package:school_van_fee_tracker/src/core/constants/app_colors.dart';
 import 'package:school_van_fee_tracker/src/core/constants/app_constants.dart';
 import 'package:school_van_fee_tracker/src/core/constants/app_icons.dart';
+import 'package:school_van_fee_tracker/src/models/student_model.dart';
 import 'package:school_van_fee_tracker/src/screens/student_detail/widgets/payment_history_table.dart';
 import 'package:school_van_fee_tracker/src/widgets/k_icon_button.dart';
 
 class StudentDetailScreen extends StatelessWidget {
-  const StudentDetailScreen({super.key});
+  final StudentModel student;
+  const StudentDetailScreen({super.key, required this.student});
 
   @override
   Widget build(BuildContext context) {
@@ -33,8 +35,8 @@ class StudentDetailScreen extends StatelessWidget {
                   ),
                   child: Row(
                     children: [
-                      buildFeesCard(context, 'Montly Fees', '₹1200'),
-                      buildFeesCard(context, 'Advance Fees', '2000'),
+                      buildFeesCard(context, 'Montly Fees', '₹${student.monthlyFee}'),
+                      buildFeesCard(context, 'Advance Fees', '₹${student.advanceFee}'),
                     ],
                   ),
                 ),
@@ -84,11 +86,11 @@ class StudentDetailScreen extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Johny S George',
+                  student.fullName,
                   style: Theme.of(context).textTheme.titleMedium,
                 ),
                 Text(
-                  'School: St Julianas Public School',
+                  'School: ${student.school.name}',
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                     color: AppColors.black.withValues(alpha: 0.6),
                   ),
@@ -110,7 +112,7 @@ class StudentDetailScreen extends StatelessWidget {
                 Iconify(Ci.phone, color: AppColors.blue),
                 hSpace4,
                 Text(
-                  '9845153265',
+                  student.phone,
                   style: TextStyle(
                     color: AppColors.blue,
                     decoration: TextDecoration.underline,
@@ -120,9 +122,7 @@ class StudentDetailScreen extends StatelessWidget {
               ],
             ),
             Spacer(),
-            Row(
-              children: [Iconify(Ci.location), hSpace2, Text('Kochi, Kerala')],
-            ),
+            Row(children: [Iconify(Ci.location), hSpace2, Text(student.place)]),
             hSpace8,
           ],
         ),
