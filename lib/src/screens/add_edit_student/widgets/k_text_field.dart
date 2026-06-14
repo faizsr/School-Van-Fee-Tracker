@@ -23,8 +23,8 @@ class KTextField extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        label.isNotEmpty ? Text(label) : SizedBox(),
-        label.isNotEmpty ? vSpace8 : SizedBox(),
+        if (label.isNotEmpty) ...[Text(label), vSpace8],
+
         TextFormField(
           cursorColor: AppColors.white.withValues(alpha: 0.5),
           autovalidateMode: AutovalidateMode.onUserInteraction,

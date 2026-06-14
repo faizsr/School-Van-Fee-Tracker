@@ -43,13 +43,13 @@ class PaymentHistoryTable extends StatelessWidget {
           shrinkWrap: true,
           physics: NeverScrollableScrollPhysics(),
           separatorBuilder: (context, index) => separator,
-          itemBuilder: (context, index) => buildTableRow(index),
+          itemBuilder: (context, index) => buildTableRow(index, context),
         ),
       ],
     );
   }
 
-  Padding buildTableRow(int index) {
+  Padding buildTableRow(int index, BuildContext context) {
     bool isDue = index % 2 == 0 && index < 5;
     bool isPaid = index % 2 == 1 && index < 5;
 
@@ -84,9 +84,27 @@ class PaymentHistoryTable extends StatelessWidget {
                   : isPaid
                   ? Row(
                       mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text('Paid', style: TextStyle(color: AppColors.white)),
+                      children: [Text('Paid')],
+                    )
+                  : index >= 5
+                  ? DropdownButton(
+                      value: 'None',
+                      isDense: true,
+                      isExpanded: true,
+                      elevation: 0,
+                      dropdownColor: AppColors.white,
+                      borderRadius: BorderRadius.circular(12),
+                      underline: SizedBox(),
+                      padding: EdgeInsets.all(0),
+                      icon: Icon(Icons.arrow_drop_down),
+                      iconEnabledColor: AppColors.black,
+                      style: Theme.of(context).textTheme.bodyMedium,
+                      items: [
+                        DropdownMenuItem(value: 'Paid', child: Text('Paid')),
+                        DropdownMenuItem(value: 'Due', child: Text('Due')),
+                        DropdownMenuItem(value: 'None', child: Text('None')),
                       ],
+                      onChanged: (value) {},
                     )
                   : Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,

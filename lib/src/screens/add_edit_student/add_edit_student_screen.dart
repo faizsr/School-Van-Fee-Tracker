@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:school_van_fee_tracker/src/core/constants/app_colors.dart';
 import 'package:school_van_fee_tracker/src/core/constants/app_constants.dart';
 import 'package:school_van_fee_tracker/src/core/constants/app_icons.dart';
+import 'package:school_van_fee_tracker/src/screens/add_edit_student/widgets/k_drop_down_field.dart';
 import 'package:school_van_fee_tracker/src/screens/add_edit_student/widgets/k_text_field.dart';
 import 'package:school_van_fee_tracker/src/widgets/k_icon_button.dart';
 
@@ -23,7 +24,11 @@ class AddEditStudentScreen extends StatelessWidget {
                 vSpace16,
                 KTextField(label: 'Phone Number', hintText: 'Eg: 9876543210'),
                 vSpace16,
-                KTextField(label: 'School Name', hintText: 'Select School'),
+                KDropDownField(
+                  label: 'School Name',
+                  hintText: 'Select School',
+                  list: ['St Julianas', 'St Peters', 'St Sebastian'],
+                ),
                 vSpace16,
                 KTextField(label: 'Place', hintText: 'Eg: Kochi'),
                 vSpace16,
