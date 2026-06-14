@@ -7,4 +7,14 @@ class SchoolModel {
   factory SchoolModel.fromJson(Map<String, dynamic> json) {
     return SchoolModel(id: json['_id'], name: json['name']);
   }
+
+  SchoolModel copyWith({
+    String? id,
+    String? name,
+  }) {
+    return SchoolModel(
+      id: id ?? this.id,
+      name: name ?? this.name,
+    );
+  }
 }

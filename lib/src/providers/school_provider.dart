@@ -21,6 +21,31 @@ class SchoolProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> editSchool(SchoolModel school, String newName) async {
+    isBtnLoading = true;
+    notifyListeners();
+
+    final result = await schoolService.editSchool(school.id, newName);
+    if (result != null) {
+      final index = schools.indexWhere((s) => s.id == school.id);
+      schools[index] = school.copyWith(name: newName);
+    }
+
+    isBtnLoading = false;
+    notifyListeners();
+  }
+
+  Future<void> deleteSchool(SchoolModel school) async {
+    isBtnLoading = true;
+    notifyListeners();
+
+    schools.removeWhere((s) => s.id == school.id);
+    await schoolService.deleteSchool(school.id);
+
+    isBtnLoading = false;
+    notifyListeners();
+  }
+
   Future<void> getSchools() async {
     isLoading = true;
     notifyListeners();

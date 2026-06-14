@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:iconify_flutter/iconify_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:school_van_fee_tracker/src/core/constants/app_colors.dart';
 import 'package:school_van_fee_tracker/src/core/constants/app_constants.dart';
 import 'package:school_van_fee_tracker/src/core/constants/app_icons.dart';
-import 'package:school_van_fee_tracker/src/core/utils/validators.dart';
 import 'package:school_van_fee_tracker/src/models/school_model.dart';
 import 'package:school_van_fee_tracker/src/providers/school_provider.dart';
-import 'package:school_van_fee_tracker/src/screens/add_edit_student/widgets/k_text_field.dart';
-import 'package:school_van_fee_tracker/src/widgets/k_filled_button.dart';
+import 'package:school_van_fee_tracker/src/screens/settings/widgets/add_edit_school_btm_sheet.dart';
 import 'package:school_van_fee_tracker/src/widgets/k_icon_button.dart';
 
 class SettingsScreen extends StatefulWidget {
@@ -18,9 +17,8 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
-  final schoolNameTextCtlr = TextEditingController();
-  final formKey = GlobalKey<FormState>();
   late SchoolProvider schoolProvider;
+  String? revealedSchoolId;
 
   @override
   void initState() {
@@ -31,14 +29,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
     super.initState();
   }
 
-  void addSchools() {
-    if (formKey.currentState!.validate()) {
-      schoolProvider.addSchool(schoolNameTextCtlr.text);
-      schoolNameTextCtlr.clear();
-      Navigator.pop(context);
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -47,7 +37,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         children: [
           buildAppbar(context),
           Padding(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -57,7 +47,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ),
 
                 GestureDetector(
-                  onTap: () => buildAddSchoolBtmSheet(context),
+                  onTap: () => buildAddEditSchoolBtmSheet(PageType.add),
                   child: Container(
                     padding: EdgeInsets.all(2),
                     decoration: BoxDecoration(
@@ -97,9 +87,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
               return Expanded(
                 child: ListView.separated(
-                  shrinkWrap: true,
                   itemCount: value.schools.length,
-                  physics: NeverScrollableScrollPhysics(),
                   separatorBuilder: (context, index) => separator,
                   itemBuilder: (context, index) {
                     final school = value.schools[index];
@@ -116,42 +104,46 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   Padding buildSchoolCard(int index, SchoolModel school) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(0, 12, 0, 12),
-      child: Row(
-        children: [
-          SizedBox(width: 40, child: Center(child: Text('${index + 1}.'))),
-          Expanded(child: Text(school.name)),
-        ],
+      padding: const EdgeInsets.fromLTRB(8, 4, 0, 4),
+      child: Dismissible(
+        key: ValueKey(school.id),
+        direction: DismissDirection.endToStart,
+        background: Container(
+          alignment: Alignment.centerRight,
+          padding: const EdgeInsets.only(right: 16),
+          decoration: BoxDecoration(color: AppColors.red),
+          child: Text(
+            'Slide to delete',
+            style: TextStyle(color: AppColors.white),
+          ),
+        ),
+        onDismissed: (_) async {
+          schoolProvider.deleteSchool(school);
+        },
+        child: Row(
+          children: [
+            SizedBox(width: 40, child: Center(child: Text('${index + 1}.'))),
+            Expanded(child: Text(school.name)),
+            IconButton(
+              onPressed: () {
+                buildAddEditSchoolBtmSheet(PageType.edit, school);
+              },
+              icon: Iconify(AppIcons.edit, size: 24),
+            ),
+          ],
+        ),
       ),
     );
   }
 
-  Future<dynamic> buildAddSchoolBtmSheet(BuildContext context) {
+  Future<dynamic> buildAddEditSchoolBtmSheet(
+    PageType type, [
+    SchoolModel? school,
+  ]) {
     return showModalBottomSheet(
       context: context,
       showDragHandle: true,
-      builder: (context) {
-        return Padding(
-          padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-          child: Form(
-            key: formKey,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                KTextField(
-                  label: 'Add New School',
-                  hintText: 'Enter school name',
-                  controller: schoolNameTextCtlr,
-                  validator: Validator.required,
-                ),
-                vSpace20,
-                KFilledButton(text: 'Done', onPressed: addSchools),
-                vSpace12,
-              ],
-            ),
-          ),
-        );
-      },
+      builder: (context) => AddEditSchoolBtmSheet(type: type, school: school),
     );
   }
 

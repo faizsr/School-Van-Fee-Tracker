@@ -27,7 +27,14 @@ class KFilledButton extends StatelessWidget {
           backgroundColor: AppColors.blue,
         ),
         child: isLoading
-            ? CircularProgressIndicator(strokeWidth: 1.5)
+            ? SizedBox(
+                width: 48 / 3,
+                height: 48 / 3,
+                child: CircularProgressIndicator(
+                  strokeWidth: 1.5,
+                  color: AppColors.white,
+                ),
+              )
             : Text(text),
       ),
     );
