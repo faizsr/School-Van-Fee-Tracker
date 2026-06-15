@@ -11,6 +11,7 @@ import 'package:school_van_fee_tracker/src/providers/student_provider.dart';
 import 'package:school_van_fee_tracker/src/screens/student_detail/widgets/payment_history_table.dart';
 import 'package:school_van_fee_tracker/src/widgets/k_confirm_dialog.dart';
 import 'package:school_van_fee_tracker/src/widgets/k_icon_button.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class StudentDetailScreen extends StatefulWidget {
   final StudentModel student;
@@ -67,6 +68,11 @@ class _StudentDetailScreenState extends State<StudentDetailScreen> {
         );
       },
     );
+  }
+
+  Future<void> _dialNumber() async {
+    final Uri launchUri = Uri(scheme: 'tel', path: widget.student.phone);
+    await launchUrl(launchUri);
   }
 
   @override
@@ -127,9 +133,7 @@ class _StudentDetailScreenState extends State<StudentDetailScreen> {
                       style: Theme.of(context).textTheme.titleSmall,
                     ),
                     vSpace8,
-                    PaymentHistoryTable(
-                      paymentsByYear: value.student!.paymentsByYear,
-                    ),
+                    PaymentHistoryTable(student: value.student!),
                   ],
                 );
               },
@@ -191,19 +195,22 @@ class _StudentDetailScreenState extends State<StudentDetailScreen> {
         vSpace16,
         Row(
           children: [
-            Row(
-              children: [
-                Iconify(Ci.phone, color: AppColors.blue),
-                hSpace4,
-                Text(
-                  student.phone,
-                  style: TextStyle(
-                    color: AppColors.blue,
-                    decoration: TextDecoration.underline,
-                    decorationColor: AppColors.blue,
+            GestureDetector(
+              onTap: _dialNumber,
+              child: Row(
+                children: [
+                  Iconify(Ci.phone, color: AppColors.blue),
+                  hSpace4,
+                  Text(
+                    student.phone,
+                    style: TextStyle(
+                      color: AppColors.blue,
+                      decoration: TextDecoration.underline,
+                      decorationColor: AppColors.blue,
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
             Spacer(),
             Row(children: [Iconify(Ci.location), hSpace2, Text(student.place)]),

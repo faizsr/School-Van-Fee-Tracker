@@ -104,8 +104,8 @@ class _HomeScreenState extends State<HomeScreen> {
             ],
           ),
           Spacer(),
-          KIconButton(icon: AppIcons.download, iconSize: 20, onPressed: () {}),
-          hSpace12,
+          // KIconButton(icon: AppIcons.download, iconSize: 20, onPressed: () {}),
+          // hSpace12,
           KIconButton(
             icon: AppIcons.settings,
             iconSize: 20,

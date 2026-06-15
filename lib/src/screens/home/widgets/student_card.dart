@@ -6,11 +6,17 @@ import 'package:school_van_fee_tracker/src/core/constants/app_constants.dart';
 import 'package:school_van_fee_tracker/src/core/constants/app_icons.dart';
 import 'package:school_van_fee_tracker/src/core/router/app_routes.dart';
 import 'package:school_van_fee_tracker/src/models/student_model.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class StudentCard extends StatelessWidget {
   const StudentCard({super.key, required this.student});
 
   final StudentModel student;
+
+  Future<void> _dialNumber() async {
+    final Uri launchUri = Uri(scheme: 'tel', path: student.phone);
+    await launchUrl(launchUri);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -92,19 +98,22 @@ class StudentCard extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Row(
-                  children: [
-                    Iconify(Ci.phone, color: AppColors.blue),
-                    hSpace4,
-                    Text(
-                      student.phone,
-                      style: TextStyle(
-                        color: AppColors.blue,
-                        decoration: TextDecoration.underline,
-                        decorationColor: AppColors.blue,
+                GestureDetector(
+                  onTap: _dialNumber,
+                  child: Row(
+                    children: [
+                      Iconify(Ci.phone, color: AppColors.blue),
+                      hSpace4,
+                      Text(
+                        student.phone,
+                        style: TextStyle(
+                          color: AppColors.blue,
+                          decoration: TextDecoration.underline,
+                          decorationColor: AppColors.blue,
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
                 Row(
                   children: [

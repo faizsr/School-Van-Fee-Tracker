@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:dio/dio.dart';
+import 'package:school_van_fee_tracker/src/models/payment_model.dart';
 import 'package:school_van_fee_tracker/src/models/student_model.dart';
 import 'package:school_van_fee_tracker/src/services/api_service.dart';
 
@@ -104,8 +105,8 @@ class StudentService {
       if (response.statusCode == 200 || response.statusCode == 201) {
         log('Student fetched successfully');
         final data = response.data['data'];
-        final students = StudentModel.fromJson(data);
-        return students;
+        final student = StudentModel.fromJson(data);
+        return student;
       }
     } on DioException catch (e) {
       log(
@@ -113,6 +114,41 @@ class StudentService {
       );
     } catch (e) {
       log('Exception in fetching student: $e');
+    }
+
+    return null;
+  }
+
+  Future<PaymentModel?> updatePayment(
+    String studentId,
+    PaymentModel payment,
+  ) async {
+    final url = '${ApiService.baseUrl}/students/$studentId/payments';
+    final body = {
+      "academicYear": payment.academicYear,
+      "month": payment.month,
+      "status": payment.status,
+      "paidOn": '${payment.paidOn}',
+      "amount": payment.amount,
+    };
+
+    log('Payment updated body: $body, Student Id: $studentId');
+
+    try {
+      final response = await dio.put(url, data: body);
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        log('Payment updated successfully: ${response.statusCode}');
+        final data = response.data['data'];
+        final payment = PaymentModel.fromJson(data);
+        return payment;
+      }
+    } on DioException catch (e) {
+      log(
+        'Dio exception in updating payment: ${e.response?.statusCode} ${e.response?.data}',
+      );
+    } catch (e) {
+      log('Exception in updating payment: $e');
     }
 
     return null;

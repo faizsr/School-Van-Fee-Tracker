@@ -1,14 +1,17 @@
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import 'package:school_van_fee_tracker/src/core/constants/app_colors.dart';
 import 'package:school_van_fee_tracker/src/core/constants/app_constants.dart';
 import 'package:school_van_fee_tracker/src/models/payment_model.dart';
+import 'package:school_van_fee_tracker/src/models/student_model.dart';
+import 'package:school_van_fee_tracker/src/providers/student_provider.dart';
 
 class PaymentHistoryTable extends StatefulWidget {
-  const PaymentHistoryTable({super.key, required this.paymentsByYear});
+  const PaymentHistoryTable({super.key, required this.student});
 
-  final Map<String, List<PaymentModel>> paymentsByYear;
+  final StudentModel student;
 
   @override
   State<PaymentHistoryTable> createState() => _PaymentHistoryTableState();
@@ -21,9 +24,9 @@ class _PaymentHistoryTableState extends State<PaymentHistoryTable> {
 
   @override
   void initState() {
-    years = widget.paymentsByYear.keys.toList();
+    years = widget.student.paymentsByYear.keys.toList();
     selectedYear = years.first;
-    payments = widget.paymentsByYear[selectedYear] ?? [];
+    payments = widget.student.paymentsByYear[selectedYear] ?? [];
     super.initState();
   }
 
@@ -46,8 +49,8 @@ class _PaymentHistoryTableState extends State<PaymentHistoryTable> {
   }
 
   void onYearChange(String year) {
-    selectedYear = years.first;
-    payments = widget.paymentsByYear[selectedYear] ?? [];
+    selectedYear = year;
+    payments = widget.student.paymentsByYear[selectedYear] ?? [];
     setState(() {});
   }
 
@@ -56,21 +59,53 @@ class _PaymentHistoryTableState extends State<PaymentHistoryTable> {
     return Column(
       children: [
         Row(
-          spacing: 8,
-          children: years.map((y) {
-            bool isSelected = selectedYear == y;
-            return GestureDetector(
-              onTap: () => onYearChange(y),
-              child: Container(
-                padding: EdgeInsets.fromLTRB(12, 4, 12, 4),
-                decoration: BoxDecoration(
-                  color: isSelected ? AppColors.blue : Colors.white,
-                  borderRadius: BorderRadius.circular(100),
+          children: [
+            Expanded(
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  spacing: 8,
+                  children: years.map((y) {
+                    bool isSelected = selectedYear == y;
+                    return GestureDetector(
+                      onTap: () => onYearChange(y),
+                      child: Container(
+                        padding: EdgeInsets.fromLTRB(12, 4, 12, 4),
+                        decoration: BoxDecoration(
+                          color: isSelected ? AppColors.blue : Colors.white,
+                          borderRadius: BorderRadius.circular(100),
+                          border: Border.all(
+                            color: isSelected
+                                ? Colors.transparent
+                                : AppColors.black.withValues(alpha: 0.2),
+                          ),
+                        ),
+                        child: Text(
+                          y,
+                          style: TextStyle(
+                            color: isSelected
+                                ? AppColors.white
+                                : AppColors.black,
+                          ),
+                        ),
+                      ),
+                    );
+                  }).toList(),
                 ),
-                child: Text(y, style: TextStyle(color: AppColors.white)),
               ),
-            );
-          }).toList(),
+            ),
+            hSpace8,
+            GestureDetector(
+              child: Container(
+                decoration: BoxDecoration(
+                  color: AppColors.lightWhite,
+                  shape: BoxShape.circle,
+                ),
+                padding: EdgeInsets.all(4),
+                child: Icon(Icons.add, size: 20),
+              ),
+            ),
+          ],
         ),
         vSpace16,
 
@@ -119,10 +154,12 @@ class _PaymentHistoryTableState extends State<PaymentHistoryTable> {
                       value: 'Due',
                       items: ['Paid', 'Due', 'None'],
                       fgColor: AppColors.white,
+                      payment: payment,
                     )
                   : buildDropDownBtn(
                       value: 'None',
                       items: ['Paid', 'Due', 'None'],
+                      payment: payment,
                     ),
             ),
           ),
@@ -135,6 +172,7 @@ class _PaymentHistoryTableState extends State<PaymentHistoryTable> {
     required String value,
     required List<String> items,
     Color? fgColor,
+    required PaymentModel payment,
   }) {
     return DropdownButton2<String>(
       isDense: true,
@@ -160,7 +198,36 @@ class _PaymentHistoryTableState extends State<PaymentHistoryTable> {
             ),
           )
           .toList(),
-      onChanged: (value) {},
+      onChanged: (value) {
+        if (value == 'Paid') {
+          StudentProvider studentProvider = context.read<StudentProvider>();
+          final newPayment = payment.copyWith(
+            academicYear: selectedYear,
+            amount: widget.student.monthlyFee,
+            paidOn: DateTime.now(),
+            status: 'paid',
+          );
+          studentProvider.updatePayment(widget.student.id, newPayment);
+        }
+        if (value == 'Due') {
+          StudentProvider studentProvider = context.read<StudentProvider>();
+          final newPayment = payment.copyWith(
+            academicYear: selectedYear,
+            paidOn: DateTime.now(),
+            status: 'due',
+          );
+          studentProvider.updatePayment(widget.student.id, newPayment);
+        }
+        if (value == 'None') {
+          StudentProvider studentProvider = context.read<StudentProvider>();
+          final newPayment = payment.copyWith(
+            academicYear: selectedYear,
+            paidOn: DateTime.now(),
+            status: 'none',
+          );
+          studentProvider.updatePayment(widget.student.id, newPayment);
+        }
+      },
       dropdownStyleData: DropdownStyleData(
         elevation: 0,
         padding: EdgeInsets.all(0),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:school_van_fee_tracker/src/models/payment_model.dart';
 import 'package:school_van_fee_tracker/src/models/student_model.dart';
 import 'package:school_van_fee_tracker/src/services/student_service.dart';
 
@@ -67,5 +68,20 @@ class StudentProvider extends ChangeNotifier {
 
     isLoading = false;
     notifyListeners();
+  }
+
+  Future<void> updatePayment(String studentId, PaymentModel payment) async {
+    final studentIndex = students.indexWhere((s) => s.id == studentId);
+    final paymentIndex1 = students[studentIndex].payments.indexWhere(
+      (p) => p.academicYear == payment.academicYear && p.month == payment.month,
+    );
+    students[studentIndex].payments[paymentIndex1] = payment;
+
+    final paymentIndex2 = student!.paymentsByYear[payment.academicYear]!
+        .indexWhere((p) => p.month == payment.month);
+    student!.paymentsByYear[payment.academicYear]![paymentIndex2] = payment;
+    notifyListeners();
+
+    await studentService.updatePayment(studentId, payment);
   }
 }
