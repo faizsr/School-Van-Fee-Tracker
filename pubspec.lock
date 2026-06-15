@@ -102,6 +102,14 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_dotenv:
+    dependency: "direct main"
+    description:
+      name: flutter_dotenv
+      sha256: d41da11fb497314fbf89811ec30af02d1d898b47980a129f0a8c0a1720460ba2
+      url: "https://pub.dev"
+    source: hosted
+    version: "6.0.1"
   flutter_lints:
     dependency: "direct dev"
     description:
@@ -453,6 +461,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.1.1"
+  whatsapp:
+    dependency: "direct main"
+    description:
+      name: whatsapp
+      sha256: "407528188de2767d2f76b307395bb180a2bc00e14cf597ff42fb738d01440665"
+      url: "https://pub.dev"
+    source: hosted
+    version: "4.0.0"
   xml:
     dependency: transitive
     description:

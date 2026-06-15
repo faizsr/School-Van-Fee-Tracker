@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:iconify_flutter/iconify_flutter.dart';
 import 'package:provider/provider.dart';
@@ -34,12 +32,33 @@ class _FilterStudentsBtmSheetState extends State<FilterStudentsBtmSheet> {
     super.initState();
   }
 
-  Future<void> onFilterPressed() async {
-    await studentProvider.getStudents(
+  @override
+  void dispose() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!studentProvider.isFiltered) {
+        studentProvider.addFilter(status: 'none', school: 'none');
+      }
+    });
+    super.dispose();
+  }
+
+  void onFilterPressed() {
+    studentProvider.getStudents(
       onInitial: true,
       filters: studentProvider.studentFilters,
     );
-    log('${studentProvider.studentFilters}');
+    Navigator.pop(context);
+  }
+
+  void onClearAllPressed() {
+    if (studentProvider.studentFilters.isNotEmpty &&
+        studentProvider.isFiltered) {
+      studentProvider.addFilter(status: 'none', school: 'none');
+      studentProvider.getStudents(onInitial: true);
+      Navigator.pop(context);
+    } else {
+      studentProvider.addFilter(status: 'none', school: 'none');
+    }
   }
 
   @override
@@ -96,15 +115,31 @@ class _FilterStudentsBtmSheetState extends State<FilterStudentsBtmSheet> {
 
               if (selectedSchool != null) buildSchoolBtn(selectedSchool!),
               if (selectedSchool != null) vSpace4,
-              Selector<SchoolProvider, bool>(
-                selector: (context, value) => value.isBtnLoading,
-                builder: (context, value, child) {
-                  return KFilledButton(
-                    text: 'Filter',
-                    isLoading: value,
-                    onPressed: onFilterPressed,
-                  );
-                },
+              Row(
+                children: [
+                  Expanded(
+                    child: KFilledButton(
+                      text: 'Clear All',
+                      onPressed: onClearAllPressed,
+                      fgColor: AppColors.black,
+                      bgColor: AppColors.lightWhite,
+                      border: true,
+                    ),
+                  ),
+                  hSpace12,
+                  Selector<SchoolProvider, bool>(
+                    selector: (context, value) => value.isBtnLoading,
+                    builder: (context, value, child) {
+                      return Expanded(
+                        child: KFilledButton(
+                          text: 'Filter',
+                          isLoading: value,
+                          onPressed: onFilterPressed,
+                        ),
+                      );
+                    },
+                  ),
+                ],
               ),
               vSpace12,
             ],

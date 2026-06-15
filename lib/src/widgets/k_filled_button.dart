@@ -8,6 +8,7 @@ class KFilledButton extends StatelessWidget {
     required this.text,
     this.bgColor = AppColors.blue,
     this.fgColor = AppColors.white,
+    this.border = false,
     this.isLoading = false,
   });
 
@@ -15,6 +16,7 @@ class KFilledButton extends StatelessWidget {
   final bool isLoading;
   final Color bgColor;
   final Color fgColor;
+  final bool border;
   final void Function()? onPressed;
 
   @override
@@ -27,6 +29,9 @@ class KFilledButton extends StatelessWidget {
         style: FilledButton.styleFrom(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
+            side: border
+                ? BorderSide(color: AppColors.black.withValues(alpha: 0.2))
+                : BorderSide.none,
           ),
           backgroundColor: bgColor,
         ),

@@ -14,6 +14,8 @@ class StudentProvider extends ChangeNotifier {
   bool isLoading = false;
   bool isBtnLoading = false;
 
+  bool isFiltered = false;
+
   Map<String, dynamic> studentFilters = {};
 
   void addFilter({String status = '', String school = ''}) {
@@ -67,8 +69,11 @@ class StudentProvider extends ChangeNotifier {
     bool onRefresh = false,
     int page = 1,
     String searchQuery = '',
-    Map<String, dynamic>? filters,
+    Map<String, dynamic> filters = const {},
   }) async {
+    isFiltered = false;
+    if (onRefresh) studentFilters.clear();
+    if (filters.isNotEmpty) isFiltered = true;
     if (onInitial && !onRefresh) {
       isLoading = true;
       notifyListeners();

@@ -1,5 +1,8 @@
+import 'dart:developer';
+
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:school_van_fee_tracker/src/core/constants/app_colors.dart';
@@ -7,6 +10,7 @@ import 'package:school_van_fee_tracker/src/core/constants/app_constants.dart';
 import 'package:school_van_fee_tracker/src/models/payment_model.dart';
 import 'package:school_van_fee_tracker/src/models/student_model.dart';
 import 'package:school_van_fee_tracker/src/providers/student_provider.dart';
+import 'package:whatsapp/whatsapp.dart';
 
 class PaymentHistoryTable extends StatefulWidget {
   const PaymentHistoryTable({super.key, required this.student});
@@ -52,6 +56,40 @@ class _PaymentHistoryTableState extends State<PaymentHistoryTable> {
     selectedYear = year;
     payments = widget.student.paymentsByYear[selectedYear] ?? [];
     setState(() {});
+  }
+
+  void sendMessageOnWhatsApp() async {
+    final accessToken = dotenv.env['ACCESS_TOKEN'] ?? '';
+
+    // Your WhatsApp Business phone number ID
+    final fromNumberId = dotenv.env['PHONE_NUMBER_ID'] ?? '';
+
+    // Create WhatsApp client instance
+    final whatsapp = WhatsApp(accessToken, fromNumberId);
+
+    // Send a simple text message
+    var message = await whatsapp.sendMessage(
+      phoneNumber: '+919388827009',
+      text: 'Hi, how are you?',
+    );
+
+    if (message.isSuccess()) {
+      // Message sent successfully
+      // Get and print the unique ID of the sent message
+      log('Message ID: ${message.getMessageId()}');
+      // Get and log the recipient number
+      log('Message sent to: ${message.getContactId()}');
+      // Get and log the full API response body
+      log('API Response: ${message.getFullResponse()}');
+    } else {
+      // Message failed to send
+      // log HTTP error code returned by the API
+      log('HTTP Code: ${message.getErrorCode()}');
+      // log exact error details from WhatsApp Cloud API
+      log('API Error: ${message.getErrorMessage()}');
+      // log type of request error (e.g., validation, authorization, etc.)
+      log('Request Error: ${message.getErrorType()}');
+    }
   }
 
   @override
@@ -227,6 +265,8 @@ class _PaymentHistoryTableState extends State<PaymentHistoryTable> {
           );
           studentProvider.updatePayment(widget.student.id, newPayment);
         }
+
+        // sendMessageOnWhatsApp();
       },
       dropdownStyleData: DropdownStyleData(
         elevation: 0,

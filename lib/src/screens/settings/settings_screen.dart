@@ -138,8 +138,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
   ]) {
     return showModalBottomSheet(
       context: context,
+      isScrollControlled: true,
       showDragHandle: true,
-      builder: (context) => AddEditSchoolBtmSheet(type: type, school: school),
+      builder: (context) {
+        final bottomInset = MediaQuery.of(context).viewInsets.bottom;
+        return Padding(
+          padding: EdgeInsets.only(bottom: bottomInset),
+          child: AddEditSchoolBtmSheet(type: type, school: school),
+        );
+      },
     );
   }
 

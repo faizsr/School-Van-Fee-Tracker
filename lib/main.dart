@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
 import 'package:school_van_fee_tracker/src/core/router/app_routes.dart';
 import 'package:school_van_fee_tracker/src/providers/school_provider.dart';
 import 'package:school_van_fee_tracker/src/providers/student_provider.dart';
 import 'package:school_van_fee_tracker/src/screens/home/home_screen.dart';
 
-void main() {
+void main() async{
+  await dotenv.load();
   runApp(const MyApp());
 }
 

@@ -41,8 +41,15 @@ class KSearchField extends StatelessWidget {
             onPressed: () {
               showModalBottomSheet(
                 context: context,
+                isScrollControlled: true,
                 showDragHandle: true,
-                builder: (context) => FilterStudentsBtmSheet(),
+                builder: (context) {
+                  final bottomInset = MediaQuery.of(context).viewInsets.bottom;
+                  return Padding(
+                    padding: EdgeInsets.only(bottom: bottomInset),
+                    child: FilterStudentsBtmSheet(),
+                  );
+                },
               );
             },
           ),
