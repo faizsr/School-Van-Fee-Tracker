@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:school_van_fee_tracker/src/core/constants/app_colors.dart';
 
+enum PageType { add, edit }
+
 const vSpace2 = SizedBox(height: 2);
 const vSpace4 = SizedBox(height: 4);
 const vSpace8 = SizedBox(height: 8);

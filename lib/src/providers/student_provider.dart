@@ -6,6 +6,7 @@ class StudentProvider extends ChangeNotifier {
   final studentService = StudentService();
 
   List<StudentModel> students = [];
+  StudentModel? student;
 
   bool isLoading = false;
   bool isBtnLoading = false;
@@ -15,36 +16,37 @@ class StudentProvider extends ChangeNotifier {
     notifyListeners();
 
     final result = await studentService.addStudent(student);
-    if (result != null) students.add(result);
+    if (result != null) students.insert(0, result);
 
     isBtnLoading = false;
     notifyListeners();
   }
 
-  // Future<void> editSchool(SchoolModel school, String newName) async {
-  //   isBtnLoading = true;
-  //   notifyListeners();
+  Future<void> editStudent(StudentModel newStudent) async {
+    isBtnLoading = true;
+    notifyListeners();
 
-  //   final result = await studentService.editSchool(school.id, newName);
-  //   if (result != null) {
-  //     final index = schools.indexWhere((s) => s.id == school.id);
-  //     schools[index] = school.copyWith(name: newName);
-  //   }
+    final result = await studentService.editStudent(newStudent);
+    if (result != null) {
+      final index = students.indexWhere((s) => s.id == newStudent.id);
+      students[index] = result;
+      student = newStudent;
+    }
 
-  //   isBtnLoading = false;
-  //   notifyListeners();
-  // }
+    isBtnLoading = false;
+    notifyListeners();
+  }
 
-  // Future<void> deleteSchool(SchoolModel school) async {
-  //   isBtnLoading = true;
-  //   notifyListeners();
+  Future<void> deleteStudent(StudentModel std) async {
+    isBtnLoading = true;
+    notifyListeners();
 
-  //   schools.removeWhere((s) => s.id == school.id);
-  //   await studentService.deleteSchool(school.id);
+    students.removeWhere((s) => s.id == std.id);
+    await studentService.deleteStudent(std.id);
 
-  //   isBtnLoading = false;
-  //   notifyListeners();
-  // }
+    isBtnLoading = false;
+    notifyListeners();
+  }
 
   Future<void> getStudents() async {
     isLoading = true;
@@ -52,6 +54,16 @@ class StudentProvider extends ChangeNotifier {
 
     final result = await studentService.getStudents();
     students = result;
+
+    isLoading = false;
+    notifyListeners();
+  }
+
+  Future<void> getStudent(String id) async {
+    isLoading = true;
+    notifyListeners();
+
+    student = await studentService.getStudent(id);
 
     isLoading = false;
     notifyListeners();

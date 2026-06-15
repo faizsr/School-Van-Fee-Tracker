@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:school_van_fee_tracker/src/core/constants/app_colors.dart';
 
@@ -6,15 +8,20 @@ class KFilledButton extends StatelessWidget {
     super.key,
     this.onPressed,
     required this.text,
+    this.bgColor = AppColors.blue,
+    this.fgColor = AppColors.white,
     this.isLoading = false,
   });
 
   final String text;
   final bool isLoading;
+  final Color bgColor;
+  final Color fgColor;
   final void Function()? onPressed;
 
   @override
   Widget build(BuildContext context) {
+    log('IsLoading: $isLoading');
     return SizedBox(
       height: 48,
       width: double.infinity,
@@ -24,7 +31,7 @@ class KFilledButton extends StatelessWidget {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
           ),
-          backgroundColor: AppColors.blue,
+          backgroundColor: bgColor,
         ),
         child: isLoading
             ? SizedBox(
@@ -35,7 +42,7 @@ class KFilledButton extends StatelessWidget {
                   color: AppColors.white,
                 ),
               )
-            : Text(text),
+            : Text(text, style: TextStyle(color: fgColor)),
       ),
     );
   }

@@ -20,7 +20,6 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   late SchoolProvider schoolProvider;
   late StudentProvider studentProvider;
-  String? revealedSchoolId;
 
   @override
   void initState() {
@@ -121,7 +120,11 @@ class _HomeScreenState extends State<HomeScreen> {
             iconColor: AppColors.white,
             bgColor: AppColors.blue,
             onPressed: () {
-              Navigator.pushNamed(context, AppRoutes.addStudent);
+              Navigator.pushNamed(
+                context,
+                AppRoutes.addStudent,
+                arguments: {'type': PageType.add},
+              );
             },
           ),
         ],

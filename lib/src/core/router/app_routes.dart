@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:school_van_fee_tracker/src/core/constants/app_constants.dart';
 import 'package:school_van_fee_tracker/src/models/student_model.dart';
 import 'package:school_van_fee_tracker/src/screens/add_edit_student/add_edit_student_screen.dart';
 import 'package:school_van_fee_tracker/src/screens/settings/settings_screen.dart';
@@ -39,12 +40,16 @@ class AppRouter {
 
       // ── Add Student ───────────────────────
       case AppRoutes.addStudent:
-        return _buildRoute(const AddEditStudentScreen());
+        final arguments = settings.arguments as Map;
+        final type = arguments['type'] as PageType;
+        return _buildRoute(AddEditStudentScreen(type: type));
 
-      // // ── Edit Student ──────────────────────
-      // case AppRoutes.editStudent:
-      //   final student = settings.arguments as Student;
-      //   return _buildRoute(AddEditStudentScreen(student: student));
+      // ── Edit Student ──────────────────────
+      case AppRoutes.editStudent:
+        final arguments = settings.arguments as Map;
+        final type = arguments['type'] as PageType;
+        final student = arguments['student'] as StudentModel;
+        return _buildRoute(AddEditStudentScreen(type: type, student: student));
 
       // ── Settings ──────────────────────────
       case AppRoutes.settings:

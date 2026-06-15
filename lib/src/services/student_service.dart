@@ -1,7 +1,6 @@
 import 'dart:developer';
 
 import 'package:dio/dio.dart';
-import 'package:school_van_fee_tracker/src/models/school_model.dart';
 import 'package:school_van_fee_tracker/src/models/student_model.dart';
 import 'package:school_van_fee_tracker/src/services/api_service.dart';
 
@@ -31,37 +30,38 @@ class StudentService {
     return null;
   }
 
-  Future<SchoolModel?> editSchool(String id, String name) async {
-    final url = '${ApiService.baseUrl}/schools/$id';
-    final body = {'name': name};
+  Future<StudentModel?> editStudent(StudentModel student) async {
+    log('Id: ${student.id}');
+    final url = '${ApiService.baseUrl}/students/${student.id}';
+    final body = student.toJson();
 
     try {
       final response = await dio.put(url, data: body);
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        log('School updated successfully: ${response.data}');
+        log('Student updated successfully: ${response.statusCode}');
         final data = response.data['data'];
-        return SchoolModel.fromJson(data);
+        return StudentModel.fromJson(data);
       }
     } on DioException catch (e) {
       log(
-        'Dio exception in updating school: ${e.response?.statusCode} ${e.response?.data}',
+        'Dio exception in updating student: ${e.response?.statusCode} ${e.response?.data}',
       );
     } catch (e) {
-      log('Exception in updating school: $e');
+      log('Exception in updating student: $e');
     }
 
     return null;
   }
 
-  Future<void> deleteSchool(String id) async {
-    final url = '${ApiService.baseUrl}/schools/$id';
+  Future<void> deleteStudent(String id) async {
+    final url = '${ApiService.baseUrl}/students/$id';
 
     try {
       final response = await dio.delete(url);
 
       if (response.statusCode == 200 || response.statusCode == 204) {
-        log('School deleted successfully: $id');
+        log('School deleted successfully: ${response.statusCode}');
       }
     } on DioException catch (e) {
       log(
@@ -93,5 +93,28 @@ class StudentService {
     }
 
     return [];
+  }
+
+  Future<StudentModel?> getStudent(String id) async {
+    final url = '${ApiService.baseUrl}/students/$id';
+
+    try {
+      final response = await dio.get(url);
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        log('Student fetched successfully');
+        final data = response.data['data'];
+        final students = StudentModel.fromJson(data);
+        return students;
+      }
+    } on DioException catch (e) {
+      log(
+        'Dio exception in fetching student: ${e.response?.statusCode} ${e.response?.data}',
+      );
+    } catch (e) {
+      log('Exception in fetching student: $e');
+    }
+
+    return null;
   }
 }

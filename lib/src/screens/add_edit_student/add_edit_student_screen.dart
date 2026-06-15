@@ -16,7 +16,10 @@ import 'package:school_van_fee_tracker/src/widgets/k_filled_button.dart';
 import 'package:school_van_fee_tracker/src/widgets/k_icon_button.dart';
 
 class AddEditStudentScreen extends StatefulWidget {
-  const AddEditStudentScreen({super.key});
+  const AddEditStudentScreen({super.key, required this.type, this.student});
+
+  final PageType type;
+  final StudentModel? student;
 
   @override
   State<AddEditStudentScreen> createState() => _AddEditStudentScreenState();
@@ -24,24 +27,33 @@ class AddEditStudentScreen extends StatefulWidget {
 
 class _AddEditStudentScreenState extends State<AddEditStudentScreen> {
   late StudentProvider studentProvider;
-
-  @override
-  void initState() {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      studentProvider = context.read<StudentProvider>();
-    });
-    super.initState();
-  }
-
-  final formKey = GlobalKey<FormState>();
   SchoolModel? school;
 
+  final formKey = GlobalKey<FormState>();
   final nameCtlr = TextEditingController();
   final phoneCtlr = TextEditingController();
   final schoolCtlr = TextEditingController();
   final placeCtlr = TextEditingController();
   final monthlyFeeCtlr = TextEditingController();
   final advanceFeeCtlr = TextEditingController();
+
+  @override
+  void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      studentProvider = context.read<StudentProvider>();
+    });
+
+    if (widget.type == PageType.edit) {
+      school = widget.student!.school;
+      nameCtlr.text = widget.student!.fullName;
+      phoneCtlr.text = widget.student!.phone;
+      schoolCtlr.text = widget.student!.school.name;
+      placeCtlr.text = widget.student!.place;
+      monthlyFeeCtlr.text = widget.student!.monthlyFee.toString();
+      advanceFeeCtlr.text = widget.student!.advanceFee.toString();
+    }
+    super.initState();
+  }
 
   void onAddPressed() async {
     if (formKey.currentState!.validate() && school != null) {
@@ -57,6 +69,24 @@ class _AddEditStudentScreenState extends State<AddEditStudentScreen> {
       log('Add Student Json: ${student.toJson()}');
 
       await studentProvider.addStudent(student);
+      if (mounted) Navigator.pop(context);
+    }
+  }
+
+  void onEditPressed() async {
+    if (formKey.currentState!.validate() && school != null) {
+      final student = widget.student!.copyWith(
+        fullName: nameCtlr.text,
+        phone: phoneCtlr.text,
+        school: school!,
+        place: placeCtlr.text,
+        monthlyFee: int.tryParse(monthlyFeeCtlr.text) ?? 0,
+        advanceFee: int.tryParse(advanceFeeCtlr.text) ?? 0,
+      );
+
+      log('Edit Student Json: ${student.toJson()}');
+
+      await studentProvider.editStudent(student);
       if (mounted) Navigator.pop(context);
     }
   }
@@ -129,7 +159,9 @@ class _AddEditStudentScreenState extends State<AddEditStudentScreen> {
                       return KFilledButton(
                         text: 'Done',
                         isLoading: value,
-                        onPressed: onAddPressed,
+                        onPressed: widget.type == PageType.add
+                            ? onAddPressed
+                            : onEditPressed,
                       );
                     },
                   ),
@@ -158,7 +190,9 @@ class _AddEditStudentScreenState extends State<AddEditStudentScreen> {
             icon: AppIcons.back,
             onPressed: () => Navigator.pop(context),
           ),
-          Text('Add New Student'),
+          Text(
+            widget.type == PageType.add ? 'Add New Student' : 'Edit Student',
+          ),
           hSpace40,
         ],
       ),

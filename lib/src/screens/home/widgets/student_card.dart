@@ -25,6 +25,7 @@ class StudentCard extends StatelessWidget {
         currentPayment != null && currentPayment.status.toLowerCase() == 'paid';
     final statusLabel = isPaid ? 'Paid' : 'Due';
     final statusColor = isPaid ? AppColors.yellow : AppColors.red;
+    final statusLabelColor = isPaid ? AppColors.black : AppColors.white;
 
     return GestureDetector(
       onTap: () => Navigator.pushNamed(
@@ -78,7 +79,7 @@ class StudentCard extends StatelessWidget {
                       ),
                       child: Text(
                         statusLabel,
-                        style: TextStyle(color: AppColors.white),
+                        style: TextStyle(color: statusLabelColor),
                       ),
                     ),
                   ],

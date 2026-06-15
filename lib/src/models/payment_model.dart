@@ -2,7 +2,7 @@ class PaymentModel {
   final String academicYear;
   final int month;
   final int amount;
-  final DateTime paidOn;
+  final DateTime? paidOn;
   final String status;
 
   PaymentModel({
@@ -24,8 +24,7 @@ class PaymentModel {
           : int.tryParse(json['amount']?.toString() ?? '') ?? 0,
       paidOn: json['paidOn'] is DateTime
           ? json['paidOn'] as DateTime
-          : DateTime.tryParse(json['paidOn']?.toString() ?? '') ??
-                DateTime.now(),
+          : DateTime.tryParse(json['paidOn']?.toString() ?? ''),
       status: json['status'] as String? ?? '',
     );
   }
@@ -35,7 +34,7 @@ class PaymentModel {
       'academicYear': academicYear,
       'month': month,
       'amount': amount,
-      'paidOn': paidOn.toIso8601String(),
+      'paidOn': paidOn?.toIso8601String(),
       'status': status,
     };
   }

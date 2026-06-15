@@ -7,8 +7,6 @@ import 'package:school_van_fee_tracker/src/providers/school_provider.dart';
 import 'package:school_van_fee_tracker/src/screens/add_edit_student/widgets/k_text_field.dart';
 import 'package:school_van_fee_tracker/src/widgets/k_filled_button.dart';
 
-enum PageType { add, edit }
-
 class AddEditSchoolBtmSheet extends StatefulWidget {
   const AddEditSchoolBtmSheet({super.key, this.school, required this.type});
 
