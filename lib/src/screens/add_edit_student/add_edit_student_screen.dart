@@ -127,8 +127,10 @@ class _AddEditStudentScreenState extends State<AddEditStudentScreen> {
                         controller: schoolCtlr,
                         hintText: 'Select School',
                         list: value.map((e) => e.name).toList(),
-                        onSelected: (name) =>
-                            school = value.firstWhere((s) => s.name == name),
+                        onSelected: (name) {
+                          school = value.firstWhere((s) => s.name == name);
+                          FocusManager.instance.primaryFocus?.unfocus();
+                        },
                       );
                     },
                   ),

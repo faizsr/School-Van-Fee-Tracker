@@ -11,6 +11,7 @@ class StudentModel {
   final int advanceFee;
   final List<PaymentModel> payments;
   final Map<String, List<PaymentModel>> paymentsByYear;
+  final int count;
 
   StudentModel({
     this.id = '',
@@ -22,9 +23,10 @@ class StudentModel {
     required this.advanceFee,
     this.payments = const [],
     this.paymentsByYear = const {},
+    this.count = 0,
   });
 
-  factory StudentModel.fromJson(Map<String, dynamic> json) {
+  factory StudentModel.fromJson(Map<String, dynamic> json, [int count = 0]) {
     final schoolData = json['school'];
     final school = schoolData is Map<String, dynamic>
         ? SchoolModel.fromJson(schoolData)
@@ -64,6 +66,7 @@ class StudentModel {
           : int.tryParse(json['advanceFee']?.toString() ?? '') ?? 0,
       payments: combinedPayments,
       paymentsByYear: paymentsByYear,
+      count: count,
     );
   }
 

@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:school_van_fee_tracker/src/core/constants/app_colors.dart';
 
@@ -21,7 +19,6 @@ class KFilledButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    log('IsLoading: $isLoading');
     return SizedBox(
       height: 48,
       width: double.infinity,

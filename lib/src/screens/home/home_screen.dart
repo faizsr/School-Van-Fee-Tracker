@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:pull_to_refresh_flutter3/pull_to_refresh_flutter3.dart';
 import 'package:school_van_fee_tracker/src/core/constants/app_colors.dart';
 import 'package:school_van_fee_tracker/src/core/constants/app_constants.dart';
 import 'package:school_van_fee_tracker/src/core/constants/app_icons.dart';
@@ -9,6 +10,7 @@ import 'package:school_van_fee_tracker/src/providers/student_provider.dart';
 import 'package:school_van_fee_tracker/src/screens/home/widgets/k_search_field.dart';
 import 'package:school_van_fee_tracker/src/screens/home/widgets/student_card.dart';
 import 'package:school_van_fee_tracker/src/widgets/k_icon_button.dart';
+import 'package:school_van_fee_tracker/src/widgets/refresh_widget.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -18,18 +20,32 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  final RefreshController refreshCtlr = RefreshController();
   late SchoolProvider schoolProvider;
   late StudentProvider studentProvider;
+  int page = 1;
 
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      schoolProvider = context.read<SchoolProvider>();
       studentProvider = context.read<StudentProvider>();
+      schoolProvider = context.read<SchoolProvider>();
+      studentProvider.getStudents(onInitial: true);
       schoolProvider.getSchools();
-      studentProvider.getStudents();
     });
     super.initState();
+  }
+
+  Future<void> onLoading() async {
+    page++;
+    await studentProvider.getStudents(page: page);
+    refreshCtlr.loadComplete();
+  }
+
+  Future<void> onRefresh() async {
+    page = 1;
+    await studentProvider.getStudents(onInitial: true, onRefresh: true);
+    refreshCtlr.refreshCompleted();
   }
 
   @override
@@ -41,7 +57,15 @@ class _HomeScreenState extends State<HomeScreen> {
         children: [
           buildHomeAppbar(context),
           separator,
-          KSearchField(),
+          KSearchField(
+            onChanged: (val) async {
+              await studentProvider.getStudents(
+                onInitial: true,
+                onRefresh: true,
+                searchQuery: val,
+              );
+            },
+          ),
           Consumer<StudentProvider>(
             builder: (context, value, child) {
               if (value.isLoading) {
@@ -67,11 +91,18 @@ class _HomeScreenState extends State<HomeScreen> {
               }
 
               return Expanded(
-                child: ListView.separated(
-                  itemCount: value.students.length,
-                  separatorBuilder: (context, index) => separator,
-                  itemBuilder: (context, index) =>
-                      StudentCard(student: value.students[index]),
+                child: RefreshWidget(
+                  refreshController: refreshCtlr,
+                  onRefresh: onRefresh,
+                  onLoading: value.students.length != value.students.first.count
+                      ? onLoading
+                      : null,
+                  child: ListView.separated(
+                    itemCount: value.students.length,
+                    separatorBuilder: (context, index) => separator,
+                    itemBuilder: (context, index) =>
+                        StudentCard(student: value.students[index]),
+                  ),
                 ),
               );
             },

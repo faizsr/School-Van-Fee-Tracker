@@ -73,16 +73,26 @@ class StudentService {
     }
   }
 
-  Future<List<StudentModel>> getStudents() async {
+  Future<List<StudentModel>> getStudents(
+    int page,
+    String searchQuery,
+    Map<String, dynamic>? filters,
+  ) async {
     final url = '${ApiService.baseUrl}/students';
+    final query = {'page': page, 'search': searchQuery};
+    if (filters != null) query.addAll(filters.cast());
+    log('Query: $query');
 
     try {
-      final response = await dio.get(url);
+      final response = await dio.get(url, queryParameters: query);
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         log('Students fetched successfully');
+        final count = response.data['data']['total'];
         final data = response.data['data']['students'] as List;
-        final students = data.map((e) => StudentModel.fromJson(e)).toList();
+        final students = data
+            .map((e) => StudentModel.fromJson(e, count))
+            .toList();
         return students;
       }
     } on DioException catch (e) {

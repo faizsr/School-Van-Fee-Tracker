@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:school_van_fee_tracker/src/models/payment_model.dart';
 import 'package:school_van_fee_tracker/src/models/student_model.dart';
@@ -11,6 +13,17 @@ class StudentProvider extends ChangeNotifier {
 
   bool isLoading = false;
   bool isBtnLoading = false;
+
+  Map<String, dynamic> studentFilters = {};
+
+  void addFilter({String status = '', String school = ''}) {
+    if (school.isEmpty) studentFilters['status'] = status;
+    if (status.isEmpty) studentFilters['school'] = school;
+
+    if (school == 'none') studentFilters.remove('school');
+    if (status == 'none') studentFilters.remove('status');
+    notifyListeners();
+  }
 
   Future<void> addStudent(StudentModel student) async {
     isBtnLoading = true;
@@ -49,12 +62,26 @@ class StudentProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> getStudents() async {
-    isLoading = true;
-    notifyListeners();
+  Future<void> getStudents({
+    bool onInitial = false,
+    bool onRefresh = false,
+    int page = 1,
+    String searchQuery = '',
+    Map<String, dynamic>? filters,
+  }) async {
+    if (onInitial && !onRefresh) {
+      isLoading = true;
+      notifyListeners();
+    }
 
-    final result = await studentService.getStudents();
-    students = result;
+    final result = await studentService.getStudents(page, searchQuery, filters);
+    if (onInitial) {
+      students = result;
+    } else {
+      students.addAll(result);
+    }
+
+    log('Students length: ${students.length}');
 
     isLoading = false;
     notifyListeners();
